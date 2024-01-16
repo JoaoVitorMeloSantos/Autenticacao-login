@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="login-container">
+        <h2>Login</h2>
+        <form id="loginForm">
+            <label for="username">Username:</label>
+            <input type="text" id="username" required>
+
+            <label for="password">Password:</label>
+            <input type="password" id="password" required>
+
+            <button type="button" onclick="login()">Login</button>
+        </form>
+        <p id="loginError" class="error-message"></p>
+    </div>
+    <script>
+        // script.js
+        function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            // Enviar dados para o backend (Node.js/Express)
+            fetch('http://localhost:3000/api/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username, password }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Armazenar informações de login na sessionStorage
+                    sessionStorage.setItem('isLoggedIn', true);
+                    sessionStorage.setItem('isAdmin', data.user.isAdmin);
+                    
+                    // Redirecionar para a página Principal ou fazer outras ações necessárias
+                    window.location.href = 'principal.html';
+                } else {
+                    // Exibir mensagem de erro
+                    document.getElementById('loginError').innerText = data.message || 'Erro desconhecido';
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
+</body>
+</html>
